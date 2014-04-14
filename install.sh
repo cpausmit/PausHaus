@@ -48,22 +48,19 @@ then
   sudo chown ${PAUSHAUS_USER}:${PAUSHAUS_GROUP} -R /var/log/PausHaus
   
   # stop potentially existing server process
-  if [ -e "/etc/init.d/rrdloggerd" ]
-  then
-    sudo /etc/init.d/rrdloggerd stop
-  fi
+  sudo service rrdlogger stop
   
-  # copy RrdLogger daemon
-  sudo cp /usr/local/PausHaus/RrdLogger/rrdloggerd /etc/init.d/
+  # copy RrdLogger service description
+  sudo cp /usr/local/PausHaus/RrdLogger/rrdlogger.service /etc/systemd/system/rrdlogger.service
   
   # start new server
-  sudo /etc/init.d/rrdloggerd status
-  sudo /etc/init.d/rrdloggerd start
-  sleep 2
-  sudo /etc/init.d/rrdloggerd status
+  sudo service rrdlogger status
+  sudo service rrdlogger start
+  sleep 2 
+  sudo service rrdlogger status
   
   # start on boot
-  sudo chkconfig --level 345 rrdloggerd on
+  sudo chkconfig --level 345 rrdlogger on
 fi
 
 exit 0

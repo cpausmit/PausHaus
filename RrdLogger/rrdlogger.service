@@ -1,0 +1,9 @@
+[Unit]
+Description=Service for the rrdlogger system
+
+[Service]
+# ExecStart=/usr/bin/vde_switch --tap tap0 --mode 0660 --dirmode 0750 --group qemu
+ExecStart=/usr/local/PausHaus/RrdLogger/rrdlogger
+
+[Install]
+WantedBy=multi-user.target
