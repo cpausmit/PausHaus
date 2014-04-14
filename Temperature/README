@@ -1,0 +1,7 @@
+# Temperature Measurements in the PausHaus
+
+We have so far two temperature probes inside the house (living room, office) but might get more. These probes will be read out by our main server and stored into an rrd database.
+
+We also readout the measurements from the closest weather station (Turkey Hill) and add it to our rrd database for display and as comparion.
+
+We have installed sysv daemon to keep the measurements coming every 10 minutes roughly.

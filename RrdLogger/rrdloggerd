@@ -1,0 +1,82 @@
+#!/bin/bash
+# --------------------------------------------------------------------------------------------------
+# rrdloggerd   Startup script for the rrdlogger server
+#
+# chkconfig: - 70 15
+# description: rrdlogger is a daemon to trigger the reading of various sensors in our house and make
+#              them available on the internet in some nice plots (based on rrd).
+#
+# processname: rrdloggerd
+# config:      /etc/rrdloggerd.conf
+# pidfile:     /var/run/rrdloggerd.pid
+# --------------------------------------------------------------------------------------------------
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# This will prevent initlog from swallowing up a pass-phrase prompt if
+# mod_ssl needs a pass-phrase from the user.
+INITLOG_ARGS=""
+
+# Path to the running script, server binary, and short-form for messages.
+#rrdloggerd=/usr/sbin/rrdlogger
+rrdloggerd=/usr/local/PausHaus/RrdLogger/rrdlogger
+prog=rrdlogger
+pidfile=${PIDFILE-/var/run/rrdloggerd.pid}
+lockfile=${LOCKFILE-/var/lock/subsys/rrdloggerd}
+
+RETVAL=0
+STOP_TIMEOUT=${STOP_TIMEOUT-10}
+
+# Start rrdlogger daemon (rrdloggerd)
+start() {
+    echo -n $"Starting $prog:"
+    daemon --pidfile=${pidfile} $rrdloggerd \&
+    RETVAL=$?
+    echo
+    [ $RETVAL = 0 ] && touch ${lockfile}
+    
+    # this seems like a hack, but I do not know how to do it differently
+    pid=`ps auxw | grep "/bin/bash $rrdloggerd" |tr -s ' '|cut -d' ' -f2`
+    echo $pid > $pidfile
+    
+    return $RETVAL
+}
+
+# Stop rrdlogger daemon (rrdloggerd)
+stop() {
+    echo -n $"Stopping $prog: "
+    killproc -p ${pidfile} -d ${STOP_TIMEOUT} $rrdloggerd
+    RETVAL=$?
+    echo
+    [ $RETVAL = 0 ] && rm -f ${lockfile} ${pidfile}
+}
+
+# See how we were called.
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  status)
+    status -p ${pidfile} $rrdloggerd
+    RETVAL=$?
+    ;;
+  restart)
+    stop
+    start
+    ;;
+  condrestart|try-restart)
+    if status -p ${pidfile} $rrdloggerd >&/dev/null
+    then
+      stop
+      start
+    fi
+    ;;
+  *)
+    echo $"Usage: $prog {start|stop|restart|status|help}"
+    RETVAL=2
+esac
+
+exit $RETVAL
