@@ -4,11 +4,11 @@
 #
 # v1.0                                                                         C.Paus (Apr 13, 2014)
 # --------------------------------------------------------------------------------------------------
-if [ -e "/usr/local/PausHaus/RrdLogger/setup.sh" ]
+if [ -e "/usr/local/PausHaus/setup.sh" ]
 then
-  source /usr/local/PausHaus/RrdLogger/setup.sh
+  source /usr/local/PausHaus/setup.sh
 else
-  echo " Could not find the standard setup.sh (in /usr/local/PausHaus/RrdLogger). EXIT!"
+  echo " Could not find the standard setup.sh (in /usr/local/PausHaus). EXIT!"
   exit 1
 fi
 
@@ -37,8 +37,10 @@ do
   do
     # enter tag into the logfile
     echo " rrdlogger loop $index  -- $tag"  >> $logFile
+    # make sure to clean out all existing processes
+    $PAUSHAUS_DIR/Tools/killProc.sh root /usr/local/bin/temperature
     # call the logger
-    $RRDLOGGER_DIR/rrdLogger.pl             >> $logFile
+    $RRDLOGGER_DIR/rrdLogger.pl             >> $logFile &
 
     # sleep for 10 minutes
     sleep 600
