@@ -5,3 +5,8 @@ We have so far two temperature probes inside the house (living room, office) but
 We also readout the measurements from the closest weather station (Turkey Hill) and add it to our rrd database for display and as comparion.
 
 We have installed sysv daemon to keep the measurements coming every 10 minutes roughly.
+
+# Installation
+
+The temperature sensor needs the USB developpers package (usb.h file). Therefore install: sudo dnf install libusb-devel
+  
